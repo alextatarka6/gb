@@ -1,5 +1,5 @@
-#include "cart/cartridge.h"
-#include "bus/bus.h"
+#include "src/cart/cartridge.h"
+#include "src/bus/bus.h"
 
 #include <iostream>
 #include <string>
