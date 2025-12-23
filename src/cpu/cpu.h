@@ -35,7 +35,7 @@ private:
     };
 
     void set_flag(Flag flg, bool on);
-    bool get_flag(Flag flg);
+    bool get_flag(Flag flg) const;
 
     // register pair helpers
     uint16_t get_bc() const;
@@ -50,5 +50,11 @@ private:
     uint16_t fetch16();
 
     // execute helpers for the first few instructions
-    int execute_opcode(uint8_t op);
+    int exec_opcode(uint8_t op);
+
+    // opcode helper functions
+    void opcode_nop();
+
+    // opcodes
+    void opcode_00(); void opcode_01();
 };
