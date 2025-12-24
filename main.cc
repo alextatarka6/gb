@@ -1,4 +1,4 @@
-#include "src/cart/cartridge.h"
+#include "src/cartridge/cartridge.h"
 #include "src/bus/bus.h"
 
 #include <iostream>
