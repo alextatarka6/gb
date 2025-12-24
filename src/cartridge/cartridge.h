@@ -1,7 +1,13 @@
 #pragma once
+
+#include "cartridge_info.h"
+#include "../address.h"
+#include "../register.h"
+
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <memory>
 
 struct CartInfo {
     std::string title;

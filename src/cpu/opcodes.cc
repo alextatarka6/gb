@@ -1,6 +1,12 @@
 #include "cpu.h"
 
+#include "../util/bitwise.h"
+
 #include <cstdlib>
+
+using bitwise::check_bit;
+using bitwise::clear_bit;
+using bitwise::set_bit;
 
 void CPU::opcode_nop() {
     
