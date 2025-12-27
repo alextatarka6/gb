@@ -4,30 +4,70 @@
 #include "../address.h"
 #include "../register.h"
 
-#include <cstdint>
 #include <string>
 #include <vector>
 #include <memory>
 
-struct CartInfo {
-    std::string title;
-    uint8_t cart_type = 0;
-    uint8_t rom_size_code = 0;
-    uint8_t ram_size_code = 0;
-};
-
 class Cartridge {
 public:
-    bool load(const std::string& path, std::string* err = nullptr);
+    Cartridge(std::vector<u8> rom_data, const std::vector<u8>& ram_data, std::unique_ptr<CartridgeInfo> in_cartridge_info);
+    virtual ~Cartridge() = default;
 
-    uint8_t read8(uint16_t addr) const;
+    virtual auto read(const Address& address) const -> u8 = 0;
+    virtual void write(const Address& address, u8 value) = 0;
 
-    const CartInfo& info() const { return info_; }
-    const std::vector<uint8_t>& rom() const { return rom_; }
+    auto get_cartridge_ram() const -> const std::vector<u8>&;
+
+protected:
+    std::vector<u8> rom;
+    std::vector<u8> ram;
+
+    std::unique_ptr<CartridgeInfo> cartridge_info;
+};
+
+auto get_cartridge(const std::vector<u8>& rom_data, const std::vector<u8>& ram_data = {}) -> std::shared_ptr<Cartridge>;
+
+class NoMBC : public Cartridge {
+public:
+    NoMBC(std::vector<u8> rom_data, const std::vector<u8>& ram_data, std::unique_ptr<CartridgeInfo> in_cartridge_info);
+
+    auto read(const Address& address) const -> u8 override;
+    void write(const Address& address, u8 value) override;
+};
+
+class MBC1 : public Cartridge {
+public:
+    MBC1(std::vector<u8> rom_data, const std::vector<u8>& ram_data, std::unique_ptr<CartridgeInfo> in_cartridge_info);
+
+    auto read(const Address& address) const -> u8 override;
+    void write(const Address& address, u8 value) override;
 
 private:
-    void parse_header();
+    WordRegister rom_bank;
+    WordRegister ram_bank;
+    bool ram_enabled = false;
 
-    std::vector<uint8_t> rom_;
-    CartInfo info_{};
+    // TODO: ROM/RAM Mode Select (6000-7FFF)
+    // This 1bit Register selects whether the two bits of the above register should
+    // be used as upper two bits of the ROM Bank, or as RAM Bank Number.
+    bool rom_banking_mode = true;
+};
+
+class MBC3 : public Cartridge {
+public:
+    MBC3(std::vector<u8> rom_data, const std::vector<u8>& ram_data, std::unique_ptr<CartridgeInfo> in_cartridge_info);
+
+    auto read(const Address& address) const -> u8 override;
+    void write(const Address& address, u8 value) override;
+
+private:
+    WordRegister rom_bank;
+    WordRegister ram_bank;
+    bool ram_enabled = false;
+    bool ram_over_rtc = true;
+
+    // TODO: ROM/RAM Mode Select (6000-7FFF)
+    // This 1bit Register selects whether the two bits of the above register should
+    // be used as upper two bits of the ROM Bank, or as RAM Bank Number.
+    bool rom_banking_mode = true;
 };

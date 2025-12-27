@@ -14,7 +14,8 @@ const int logo = 0x104;
 const int title = 0x134;
 const int manufacturer_code = 0x13F;
 const int cgb_flag = 0x143;
-const int new_license_code = 0x144;
+const int new_license_code_high = 0x144;
+const int new_license_code_low = 0x145;
 const int sgb_flag = 0x146;
 const int cartridge_type = 0x147;
 const int rom_size = 0x148;
@@ -33,7 +34,7 @@ enum class CartridgeType {
     MBC3,
     MBC4,
     MBC5,
-    UKNOWN
+    UNKNOWN
 };
 
 extern auto get_type(u8 type) -> CartridgeType;
@@ -41,7 +42,9 @@ extern auto describe(CartridgeType type) -> std::string;
 
 extern auto get_title(std::vector<u8>& rom) -> std::string;
 
-extern auto get_license(u16 old_license, u16 new_license) -> std::string;
+extern auto get_license(u8 old_license, u8 new_license_high, u8 new_license_low) -> std::string;
+
+extern auto get_new_license(u8 new_license_high, u8 new_license_low) -> std::string;
 
 enum class ROMSize {
     KB32,
@@ -71,7 +74,7 @@ enum class RAMSize {
 };
 
 extern auto get_ram_size(u8 size_code) -> RAMSize;
-extern auto get_actual_ram_size(RAMSize size_code) -> uint;
+extern auto get_actual_ram_size(RAMSize size) -> uint;
 extern auto describe(RAMSize size) -> std::string;
 
 enum class Destination {
