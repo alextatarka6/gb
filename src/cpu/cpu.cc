@@ -1,6 +1,5 @@
 #include "cpu.h"
 
-#include "../bus/bus.h"
 #include "opcode_names.h"
 #include "../util/bitwise.h"
 

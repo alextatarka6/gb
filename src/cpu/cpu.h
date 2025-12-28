@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../address.h"
 #include "../register.h"
-#include <cstdint>
+#include "../options.h"
 
-class Bus;
+class Gameboy;
 
 // flag helpers
 enum class Condition {
@@ -15,7 +16,7 @@ enum class Condition {
 
 class CPU {
 public:
-    explicit CPU(Bus* bus);
+    CPU(Gameboy& inGb, Options& options);
 
     void reset();               // set registers to power on state
     int tick();                 // execute 1 instruction, return cycles
@@ -25,7 +26,8 @@ public:
     auto execute_normal_opcode(u8 opcode, u16 opcode_pc) -> int;
 
 private:
-    Bus* bus_ = nullptr;
+    Gameboy& gb;
+    Options& options;
 
     // 8-bit regs
     ByteRegister a, b, c, d, e, h, l;
