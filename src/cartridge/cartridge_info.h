@@ -94,7 +94,7 @@ public:
     Destination destination;
     ROMSize rom_size;
     RAMSize ram_size;
-    std::string license_code;
+    std::string license;
     u8 version;
 
     u16 header_checksum;
