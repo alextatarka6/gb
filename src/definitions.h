@@ -26,3 +26,37 @@ template <typename... T> void unused(T&&... unused_vars) {}
     log_error("Fatal error @ %s (line %d)", __PRETTY_FUNCTION__, __LINE__); \
     log_error(__VA_ARGS__); \
     exit(1);
+
+const uint GAMEBOY_WIDTH = 160;
+const uint GAMEBOY_HEIGHT = 144;
+const uint BG_MAP_SIZE = 256;
+
+const int CLOCK_RATE = 4194304; // 4.194304 MHz
+
+enum class GBColor {
+    Color0, // White
+    Color1, // Light Gray
+    Color2, // Dark Gray
+    Color3, // Black
+};
+
+enum class Color {
+    White,
+    LightGray,
+    DarkGray,
+    Black,
+};
+
+struct Palette {
+    Color color0 = Color::White;
+    Color color1 = Color::LightGray;
+    Color color2 = Color::DarkGray;
+    Color color3 = Color::Black;
+};
+
+class Cycles {
+public:
+    Cycles(uint nCycles) : cycles(nCycles) {}
+
+    const uint cycles;
+};

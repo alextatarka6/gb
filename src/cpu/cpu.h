@@ -14,20 +14,50 @@ enum class Condition {
     C
 };
 
+namespace rst {
+const u16 rst1 = 0x00;
+const u16 rst2 = 0x08;
+const u16 rst3 = 0x10;
+const u16 rst4 = 0x18;
+const u16 rst5 = 0x20;
+const u16 rst6 = 0x28;
+const u16 rst7 = 0x30;
+const u16 rst8 = 0x38;
+}; // namespace rst
+
+namespace interrupts {
+const u16 vblank = 0x40;
+const u16 lcd_status = 0x48;
+const u16 timer = 0x50;
+const u16 serial = 0x58;
+const u16 joypad = 0x60;
+}; // namespace interrupts
+
 class CPU {
 public:
     CPU(Gameboy& inGb, Options& options);
 
-    void reset();               // set registers to power on state
-    int tick();                 // execute 1 instruction, return cycles
+    auto tick() -> Cycles;
 
-    auto execute_opcode(u8 opcode, u16 opcode_pc) -> int;
-    auto execute_cb_opcode(u8 opcode, u16 opcode_pc) -> int;
-    auto execute_normal_opcode(u8 opcode, u16 opcode_pc) -> int;
+    auto execute_opcode(u8 opcode, u16 opcode_pc) -> Cycles;
+
+    auto execute_normal_opcode(u8 opcode, u16 opcode_pc) -> Cycles;
+    auto execute_cb_opcode(u8 opcode, u16 opcode_pc) -> Cycles;
+
+    ByteRegister interrupt_flag;
+    ByteRegister interrupt_enabled;
 
 private:
+    void handle_interrupts();
+    auto handle_interrupt(u8 interrupt_bit, u16 interrupt_vector, u8 fired_interrupts) -> bool;
+
     Gameboy& gb;
     Options& options;
+
+    bool interrupts_enabled = false;
+    bool halted = false;
+
+    bool branch_taken = false;
 
     // 8-bit regs
     ByteRegister a, b, c, d, e, h, l;
@@ -50,6 +80,10 @@ private:
     void set_flag_half_carry(bool set);
     void set_flag_carry(bool set);
 
+    // Note that it's not const because this also sets the 'branch_taken' flag if a branch is taken
+    // This allows the correct cycle count to be used
+    auto is_condition(Condition condition) -> bool;
+
     // Program Counter
     WordRegister pc;
 
@@ -63,13 +97,90 @@ private:
     void stack_push(const WordValue& reg);
     void stack_pop(WordValue& reg);
 
-    // opcode helper functions
+    /* Opcode Helper Functions */
+
+    // ADC
+    void _opcode_adc(u8 value);
+
+    void opcode_adc();
+    void opcode_adc(const ByteRegister& reg);
+    void opcode_adc(const Address&& addr);
+
+    // ADD
+    void _opcode_add(u8 reg, u8 value);
+
+    void opcode_add_a();
+    void opcode_add_a(const ByteRegister& reg);
+    void opcode_add_a(const Address&& addr);
+
+    void opcode_add_hl(const u16 value);
+    void opcode_add_hl(const RegisterPair& reg_pair);
+    void opcode_add_hl(const WordRegister& word_reg);
+
+    void opcode_add_sp();
+
+    // AND
+    void _opcode_and(u8 value);
+
+    void opcode_and();
+    void opcode_and(const ByteRegister& reg);
+    void opcode_and(const Address&& addr);
+
+    // BIT
+    void _opcode_bit(u8 bit, u8 value);
+
+    void opcode_bit(u8 bit, ByteRegister& reg);
+    void opcode_bit(u8 bit, const Address&& addr);
+
+    // CALL
+    void opcode_call();
+    void opcode_call(Condition condition);
+
+    // CCF
+    void opcode_ccf();
+
+    // CP
+    void _opcode_cp(u8 value);
+
+    void opcode_cp();
+    void opcode_cp(const ByteRegister& reg);
+    void opcode_cp(const Address&& addr);
+
+    // CPL
+    void opcode_cpl();
+
+    // DAA
+    void opcode_daa();
+
+    // DEC
+    void opcode_dec(ByteRegister& reg);
+    void opcode_dec(RegisterPair& reg_pair);
+    void opcode_dec(WordRegister& word_reg);
+    void opcode_dec(Address&& addr);
+
+    // DI
+    void opcode_di();
+
+    // EI
+    void opcode_ei();
+
+    // INC
+    void opcode_inc(ByteRegister& reg);
+    void opcode_inc(RegisterPair& reg_pair);
+    void opcode_inc(WordRegister& word_reg);
+    void opcode_inc(Address&& addr);
+
+    // JP
+    void opcode_jp();
+    void opcode_jp(Condition condition);
+    void opcode_jp(Address&& addr);
 
     // NOP
     void opcode_nop();
 
     // LD
     void opcode_ld(ByteRegister& reg);
+    void opcode_ld(ByteRegister&, ByteRegister&);
 
     // opcodes
     void opcode_00(); void opcode_01(); void opcode_02(); void opcode_03(); void opcode_04(); void opcode_05(); void opcode_06(); void opcode_07(); void opcode_08(); void opcode_09(); void opcode_0A(); void opcode_0B(); void opcode_0C(); void opcode_0D(); void opcode_0E(); void opcode_0F();
