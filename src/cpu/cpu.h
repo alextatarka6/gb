@@ -175,12 +175,109 @@ private:
     void opcode_jp(Condition condition);
     void opcode_jp(Address&& addr);
 
-    // NOP
-    void opcode_nop();
+    // JR
+    void opcode_jr();
+    void opcode_jr(Condition condition);
+
+    // HALT
+    void opcode_halt();
 
     // LD
     void opcode_ld(ByteRegister& reg);
-    void opcode_ld(ByteRegister&, ByteRegister&);
+    void opcode_ld(ByteRegister& reg, const ByteRegister& byte_reg);
+    void opcode_ld(ByteRegister& reg, const Address&& addr);
+
+    void opcode_ld(RegisterPair& reg_pair);
+
+    void opcode_ld(WordRegister& word_reg);
+    void opcode_ld(WordRegister& word_reg, const RegisterPair& reg_pair);
+
+    void opcode_ld(const Address& addr);
+    void opcode_ld(const Address& addr, const ByteRegister& reg);
+    void opcode_ld(const Address& addr, const WordRegister& word_reg);
+
+    // (nn), A
+    void opcode_ld_to_addr(const ByteRegister& reg);
+    void opcode_ld_from_addr(ByteRegister& reg);
+
+    // LDD
+    void opcode_ldd(ByteRegister& reg, const Address& addr);
+    void opcode_ldd(const Address& addr, const ByteRegister& reg);
+
+    /* LDH */
+    // A, (n)
+    void opcode_ldh_into_a();
+    // (n), A
+    void opcode_ldh_into_data();
+    // (reg), A
+    void opcode_ldh_into_c();
+    // A, (reg)
+    void opcode_ldh_c_into_a();
+
+    // LDHL
+    void opcode_ldhl();
+
+    // LDI
+    void opcode_ldi(ByteRegister& reg, const Address& addr);
+    void opcode_ldi(const Address& addr, const ByteRegister& reg);
+
+    // NOP
+    void opcode_nop();
+
+    // OR
+    void _opcode_or(u8 value);
+
+    void opcode_or();
+    void opcode_or(const ByteRegister& reg);
+    void opcode_or(const Address&& addr);
+
+    // POP
+    void opcode_pop(RegisterPair& reg_pair);
+
+    // PUSH
+    void opcode_push(const RegisterPair& reg_pair);
+
+    // RES
+    void opcode_res(u8 bit, ByteRegister& reg);
+    void opcode_res(u8 bit, Address&& addr);
+
+    // RET
+    void opcode_ret();
+    void opcode_ret(Condition condition);
+
+    // RETI
+    void opcode_reti();
+
+    // RL
+    auto _opcode_rl(u8 value) -> u8;
+
+    void opcode_rla();
+    void opcode_rl(ByteRegister& reg);
+    void opcode_rl(Address&& addr);
+
+    // RLC
+    auto _opcode_rlc(u8 value) -> u8;
+
+    void opcode_rlca();
+    void opcode_rlc(ByteRegister& reg);
+    void opcode_rlc(Address&& addr);
+
+    // RR
+    auto _opcode_rr(u8 value) -> u8;
+
+    void opcode_rra();
+    void opcode_rr(ByteRegister& reg);
+    void opcode_rr(Address&& addr);
+
+    // RRC
+    auto _opcode_rrc(u8 value) -> u8;
+
+    void opcode_rrca();
+    void opcode_rrc(ByteRegister& reg);
+    void opcode_rrc(Address&& addr);
+
+    // RST
+    void opcode_rst(const u8 offset);
 
     // opcodes
     void opcode_00(); void opcode_01(); void opcode_02(); void opcode_03(); void opcode_04(); void opcode_05(); void opcode_06(); void opcode_07(); void opcode_08(); void opcode_09(); void opcode_0A(); void opcode_0B(); void opcode_0C(); void opcode_0D(); void opcode_0E(); void opcode_0F();
