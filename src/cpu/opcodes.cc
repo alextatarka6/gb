@@ -622,3 +622,190 @@ void CPU::opcode_rst(const u8 offset) {
     stack_push(pc);
     pc.set(offset);
 }
+
+// SBC
+void CPU::_opcode_sbc(u8 value) {
+    u8 reg = a.value();
+    u8 carry = f.flag_carry_value();
+
+    uint result_full = reg - value - carry;
+    u8 result = static_cast<u8>(result_full);
+
+    set_flag_zero(result == 0);
+    set_flag_subtract(true);
+    set_flag_half_carry((reg & 0xF) < ((value & 0xF) + carry));
+    set_flag_carry(reg < (value + carry));
+
+    a.set(result);
+}
+
+void CPU::opcode_sbc() {
+    _opcode_sbc(get_byte_from_pc());
+}
+
+void CPU::opcode_sbc(const ByteRegister& reg) {
+    _opcode_sbc(reg.value());
+}
+
+void CPU::opcode_sbc(const Address&& addr) {
+    _opcode_sbc(gb.mmu.read(addr));
+}
+
+// SCF
+void CPU::opcode_scf() {
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(true);
+}
+
+// SET
+void CPU::opcode_set(u8 bit, ByteRegister& reg) {
+    u8 result = set_bit(reg.value(), bit);
+    reg.set(result);
+}
+
+void CPU::opcode_set(u8 bit, Address&& addr) {
+    u8 value = gb.mmu.read(addr);
+    u8 result = set_bit(value, bit);
+    gb.mmu.write(addr, result);
+}
+
+// SLA
+auto CPU::_opcode_sla(u8 value) -> u8 {
+    bool will_carry = check_bit(value, 7);
+    u8 result = static_cast<u8>(value << 1);
+    set_flag_zero(result == 0);
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(will_carry);
+    return result;
+}
+
+void CPU::opcode_sla(ByteRegister& reg) {
+    reg.set(_opcode_sla(reg.value()));
+}
+
+void CPU::opcode_sla(Address&& addr) {
+    u8 value = gb.mmu.read(addr);
+    u8 result = _opcode_sla(value);
+    gb.mmu.write(addr, result);
+}
+
+// SRA
+auto CPU::_opcode_sra(u8 value) -> u8 {
+    bool will_carry = check_bit(value, 0);
+    u8 top_bit = check_bit(value, 7) ? 0x80 : 0x00;
+    u8 result = static_cast<u8>((value >> 1) | top_bit);
+    set_flag_zero(result == 0);
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(will_carry);
+    return result;
+}
+
+void CPU::opcode_sra(ByteRegister& reg) {
+    reg.set(_opcode_sra(reg.value()));
+}
+
+void CPU::opcode_sra(Address&& addr) {
+    u8 value = gb.mmu.read(addr);
+    u8 result = _opcode_sra(value);
+    gb.mmu.write(addr, result);
+}
+
+// SRL
+auto CPU::_opcode_srl(u8 value) -> u8 {
+    bool will_carry = check_bit(value, 0);
+    u8 result = static_cast<u8>(value >> 1);
+    set_flag_zero(result == 0);
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(will_carry);
+    return result;
+}
+
+void CPU::opcode_srl(ByteRegister& reg) {
+    reg.set(_opcode_srl(reg.value()));
+}
+
+void CPU::opcode_srl(Address&& addr) {
+    u8 value = gb.mmu.read(addr);
+    u8 result = _opcode_srl(value);
+    gb.mmu.write(addr, result);
+}
+
+// SUB
+void CPU::_opcode_sub(u8 value) {
+    u8 reg = a.value();
+    u8 result = static_cast<u8>(reg - value);
+
+    a.set(result);
+
+    set_flag_zero(result == 0);
+    set_flag_subtract(true);
+    set_flag_half_carry((reg & 0xF) < (value & 0xF));
+    set_flag_carry(reg < value);
+}
+
+void CPU::opcode_sub() {
+    _opcode_sub(get_byte_from_pc());
+}
+
+void CPU::opcode_sub(const ByteRegister& reg) {
+    _opcode_sub(reg.value());
+}
+
+void CPU::opcode_sub(const Address&& addr) {
+    _opcode_sub(gb.mmu.read(addr));
+}
+
+// SWAP
+
+auto CPU::_opcode_swap(u8 value) -> u8 {
+    u8 upper_nibble = (value & 0xF0) >> 4;
+    u8 lower_nibble = (value & 0x0F) << 4;
+    u8 result = upper_nibble | lower_nibble;
+
+    set_flag_zero(result == 0);
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(false);
+
+    return result;
+}
+
+void CPU::opcode_swap(ByteRegister& reg) {
+    reg.set(_opcode_swap(reg.value()));
+}
+
+void CPU::opcode_swap(Address&& addr) {
+    u8 value = gb.mmu.read(addr);
+    u8 result = _opcode_swap(value);
+    gb.mmu.write(addr, result);
+}
+
+// XOR
+void CPU::_opcode_xor(u8 value) {
+    u8 reg = a.value();
+    u8 result = reg ^ value;
+
+    a.set(result);
+
+    set_flag_zero(result == 0);
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(false);
+}
+
+void CPU::opcode_xor() {
+    _opcode_xor(get_byte_from_pc());
+}
+
+void CPU::opcode_xor(const ByteRegister& reg) {
+    _opcode_xor(reg.value());
+}
+
+void CPU::opcode_xor(const Address&& addr) {
+    _opcode_xor(gb.mmu.read(addr));
+}
+
