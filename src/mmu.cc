@@ -17,7 +17,7 @@ auto MMU::read(const Address& address) const -> u8 {
     if (address.in_range(0x0, 0x7FFF)) {
         if (address.in_range(0x0, 0xFF) && boot_rom_active()) {
             // TODO: implement boot.h
-            return;
+            return 0xFF;
         }
         return gb.cartridge->read(address);
     }
@@ -114,7 +114,7 @@ void MMU::write(const Address& address, const u8 byte) {
 
     // OAM
     if (address.in_range(0xFE00, 0xFE9F)) {
-        oam_ram.at(address.value() - 0xC000) = byte;
+        oam_ram.at(address.value() - 0xFE00) = byte;
         return;
     }
 

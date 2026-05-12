@@ -70,7 +70,7 @@ auto RegisterPair::value() const -> u16 {
 void RegisterPair::increment() {
     set(value() + 1);
 }
-void RegisterPair::increment() {
+void RegisterPair::decrement() {
     set(value() - 1);
 }
 

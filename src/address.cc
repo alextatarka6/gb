@@ -22,7 +22,7 @@ auto Address::operator+(uint other) const -> Address {
     return Address(new_addr);
 }
 
-auto Address::operator+(uint other) const -> Address {
+auto Address::operator-(uint other) const -> Address {
     u16 new_addr = static_cast<u16>(addr - other);
     return Address(new_addr);
 }

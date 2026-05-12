@@ -60,16 +60,16 @@ void CPU::handle_interrupts() {
     handled_interrupt = handle_interrupt(0, interrupts::vblank, fired_interrupts);
     if (handled_interrupt) { return; }
 
-    handled_interrupt = handle_interrupt(0, interrupts::lcdc_status, fired_interrupts);
+    handled_interrupt = handle_interrupt(1, interrupts::lcdc_status, fired_interrupts);
     if (handled_interrupt) { return; }
 
-    handled_interrupt = handle_interrupt(0, interrupts::timer, fired_interrupts);
+    handled_interrupt = handle_interrupt(2, interrupts::timer, fired_interrupts);
     if (handled_interrupt) { return; }
 
-    handled_interrupt = handle_interrupt(0, interrupts::serial, fired_interrupts);
+    handled_interrupt = handle_interrupt(3, interrupts::serial, fired_interrupts);
     if (handled_interrupt) { return; }
 
-    handled_interrupt = handle_interrupt(0, interrupts::joypad, fired_interrupts);
+    handled_interrupt = handle_interrupt(4, interrupts::joypad, fired_interrupts);
     if (handled_interrupt) { return; }
 
     return;

@@ -447,6 +447,9 @@ void CPU::_opcode_or(u8 value) {
     a.set(result);
 
     set_flag_zero(result == 0);
+    set_flag_subtract(false);
+    set_flag_half_carry(false);
+    set_flag_carry(false);
 }
 
 void CPU::opcode_or() {
@@ -573,6 +576,8 @@ auto CPU::_opcode_rr(u8 value) -> u8 {
     set_flag_zero(result == 0);
     set_flag_subtract(false);
     set_flag_half_carry(false);
+
+    return result;
 }
 
 void CPU::opcode_rra() {
