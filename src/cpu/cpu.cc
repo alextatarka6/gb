@@ -132,14 +132,14 @@ auto CPU::is_condition(Condition condition) -> bool {
     return should_branch;
 }
 
-void CPU::stack_push(const WordRegister& reg) {
+void CPU::stack_push(const WordValue& reg) {
     sp.decrement();
     gb.mmu.write(Address(sp), reg.high());
     sp.decrement();
     gb.mmu.write(Address(sp), reg.low());
 }
 
-void CPU::stack_pop(WordRegister& reg) {
+void CPU::stack_pop(WordValue& reg) {
     u8 low = gb.mmu.read(Address(sp));
     sp.increment();
     u8 high = gb.mmu.read(Address(sp));

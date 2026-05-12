@@ -94,8 +94,8 @@ private:
     auto get_signed_byte_from_pc() -> s8;
     auto get_word_from_pc() -> u16;
 
-    void stack_push(const WordRegister& reg);
-    void stack_pop(WordRegister& reg);
+    void stack_push(const WordValue& reg);
+    void stack_pop(WordValue& reg);
 
     /* Opcode Helper Functions */
 
@@ -372,4 +372,5 @@ private:
     void opcode_CB_E0(); void opcode_CB_E1(); void opcode_CB_E2(); void opcode_CB_E3(); void opcode_CB_E4(); void opcode_CB_E5(); void opcode_CB_E6(); void opcode_CB_E7(); void opcode_CB_E8(); void opcode_CB_E9(); void opcode_CB_EA(); void opcode_CB_EB(); void opcode_CB_EC(); void opcode_CB_ED(); void opcode_CB_EE(); void opcode_CB_EF();
     void opcode_CB_F0(); void opcode_CB_F1(); void opcode_CB_F2(); void opcode_CB_F3(); void opcode_CB_F4(); void opcode_CB_F5(); void opcode_CB_F6(); void opcode_CB_F7(); void opcode_CB_F8(); void opcode_CB_F9(); void opcode_CB_FA(); void opcode_CB_FB(); void opcode_CB_FC(); void opcode_CB_FD(); void opcode_CB_FE(); void opcode_CB_FF();
     /* clang-format on */
+    friend class Debugger;
 };

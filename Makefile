@@ -1,24 +1,54 @@
-CXX := clang++
-CXXFLAGS := -Wall -Wextra -g
+NAME=gbemu
+BUILD_DIR=build
 
-ROMINFO := rominfo
+.PHONY: default
+default: release tags
 
-UTIL_SRCS := $(wildcard src/util/*.cc)
+#################
+# Utility targets
+#################
 
-ROMINFO_SRCS := \
-	platforms/test/main.cc \
-	src/cartridge/cartridge_info.cc \
-	$(UTIL_SRCS)
+.PHONY: build-dir
+build-dir:
+	@mkdir -p $(BUILD_DIR)
 
-ROMINFO_OBJS := $(ROMINFO_SRCS:.cc=.o)
+.PHONY: rebuild
+rebuild: clean release tags
 
-all: $(ROMINFO)
+.PHONY: compile
+compile:
+	@cd $(BUILD_DIR) && make
 
-$(ROMINFO) : $(ROMINFO_OBJS)
-	$(CXX) $(ROMINFO_OBJS) -o $@
-
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
+.PHONY: clean
 clean:
-	rm -f $(ROMINFO) $(ROMINFO_OBJS)
+	@rm -rf $(BUILD_DIR)
+
+.PHONY: tags
+tags:
+	@ctags .
+
+.PHONY: format
+format:
+	@./scripts/clang-format
+
+.PHONY: tidy
+tidy: debug
+	@./scripts/clang-tidy
+
+###################
+# Commands to build
+###################
+
+.PHONY: cmake-debug
+cmake-debug: build-dir
+	@cd $(BUILD_DIR) && cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=on ..
+
+.PHONY: cmake-release
+cmake-release: build-dir
+	@cd $(BUILD_DIR) && cmake -DCMAKE_BUILD_TYPE=Release ..
+
+.PHONY: debug
+debug: cmake-debug compile
+
+.PHONY: release
+release: cmake-release compile
