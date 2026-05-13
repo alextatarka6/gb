@@ -1,5 +1,6 @@
 #pragma once
 
+#include "apu/apu.h"
 #include "debugger.h"
 #include "input.h"
 #include "cpu/cpu.h"
@@ -32,6 +33,7 @@ public:
     void debug_toggle_window();
 
     auto get_cartridge_ram() const -> const std::vector<u8>&;
+    auto get_audio_buffer() -> AudioBuffer&;
 
 private:
     void tick();
@@ -40,6 +42,9 @@ private:
 
     CPU cpu;
     friend class CPU;
+
+    APU apu;
+    friend class APU;
 
     Video video;
     friend class Video;

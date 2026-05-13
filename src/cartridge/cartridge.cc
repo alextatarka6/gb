@@ -5,7 +5,7 @@
 #include "../util/files.h"
 #include "../util/log.h"
 
-auto get_cartridge(const std::vector<u8>& rom_data, const std::vector<u8>& ram_data = {}) -> std::shared_ptr<Cartridge> {
+auto get_cartridge(const std::vector<u8>& rom_data, const std::vector<u8>& ram_data) -> std::shared_ptr<Cartridge> {
     std::unique_ptr<CartridgeInfo> info = get_info(rom_data);
 
     switch (info->type) {

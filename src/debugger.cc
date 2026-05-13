@@ -177,6 +177,15 @@ void Debugger::command_memory_cell(Args args) {
     printf("0x%02X\n", gameboy.mmu.read(memory_location));
 }
 
+void Debugger::command_breakaddr(Args args) {
+    if (args.size() != 1) {
+        log_error("Invalid arguments to command");
+        return;
+    }
+    breakpoint_addr = static_cast<u16>(std::stoul(args[0], nullptr, 16));
+    log_info("Breakpoint set at address 0x%04X", breakpoint_addr);
+}
+
 void Debugger::command_breakvalue(Args args) {
     if (args.size() != 2) {
         log_error("Invalid arguments to command");

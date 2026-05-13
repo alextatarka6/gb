@@ -485,6 +485,55 @@ cd server && npm run dev
 
 ---
 
+## Remaining Core TODOs
+
+These are gaps in the current emulator core that need to be closed before most commercial ROMs will run correctly.
+
+### MMU / Memory
+
+| Location | TODO |
+|----------|------|
+| `mmu.cc:19` | Boot ROM — currently returns `0xFF`; implement or skip by setting `0xFF50 = 1` at startup |
+| `mmu.cc:27,98` | VRAM read/write — currently no-ops; needs to route to `video_ram` in the Video class |
+| `mmu.cc:67,146` | Interrupt Enable register (`0xFFFF`) and Interrupt Flag (`0xFF0F`) — reads/writes ignored |
+| `mmu.cc` | IO register routing — most `0xFF00–0xFF7F` addresses (joypad, serial, timer, DMA) currently fall through to `unmapped_io_*`; each needs to be wired |
+
+### CPU / Interrupts
+
+| Location | TODO |
+|----------|------|
+| `cpu.cc:48` | HALT bug — when `IME=0` and a pending interrupt exists, the next byte after `HALT` is read twice; needed for some games |
+| `cpu/opcodes.cc` | `STOP` currently aliases `HALT`; full STOP should also power down LCD and wait for button press |
+
+### Cartridge
+
+| Location | TODO |
+|----------|------|
+| `cartridge.h:50,69` | MBC1 + MBC3 ROM/RAM Mode Select (`0x6000–0x7FFF`) — bank switching mode not implemented |
+| `cartridge.cc:52` | Bounds check on MBC ROM bank reads |
+| *(missing)* | MBC5 — required by many commercial titles (Pokémon G/S/C, DK Country, etc.) |
+
+### Video (PPU)
+
+| Location | TODO |
+|----------|------|
+| `video.cc:190,257` | Tile fetch reads the full row of pixels per pixel — redundant work; replace with a proper pixel FIFO or per-row fetch |
+| `video.cc:328` | Sprite-over-background priority not fully correct — needs BG colour 0 transparency check |
+| `video.cc:357` | Duplicated tile-fetch logic between BG and window rendering; refactor into shared helper |
+| `video.h:60–61` | CGB colour palettes and VRAM bank register (out of scope for DMG target, tracked for future) |
+
+### Implementation Order (recommended)
+
+1. Wire VRAM reads/writes through MMU → Video
+2. Wire IO registers: joypad (`0xFF00`), timer (`0xFF04–0xFF07`), interrupt flag (`0xFF0F`), IE (`0xFFFF`)
+3. Skip boot ROM (write `0x01` to `0xFF50` on startup) so games boot immediately
+4. MBC1 ROM/RAM mode select
+5. MBC5 support
+6. Fix sprite priority (BG colour 0 transparency)
+7. HALT bug
+
+---
+
 ## Open Questions
 
 - **MBC5 support** — Many commercial ROMs require MBC5; worth adding before the website goes live.

@@ -321,6 +321,11 @@ void CPU::opcode_halt() {
     halted = true;
 }
 
+// STOP — treated as HALT for now (full STOP also powers down LCD)
+void CPU::opcode_stop() {
+    halted = true;
+}
+
 // LD
 void CPU::opcode_ld(ByteRegister& reg){
     u8 n = get_byte_from_pc();

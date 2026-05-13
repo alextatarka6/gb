@@ -9,6 +9,7 @@ add_sources(
     timer.cc
 )
 
+add_subdirectory(apu)
 add_subdirectory(cartridge)
 add_subdirectory(cpu)
 add_subdirectory(util)

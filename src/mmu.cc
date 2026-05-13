@@ -72,8 +72,14 @@ auto MMU::read(const Address& address) const -> u8 {
 }
 
 auto MMU::read_io(const Address& address) const -> u8 {
-    // TODO: implement hardware registers
-    return 0xFF;
+    u16 addr = address.value();
+
+    // APU registers and wave RAM
+    if (addr >= 0xFF10 && addr <= 0xFF3F) {
+        return gb.apu.read(address);
+    }
+
+    return unmapped_io_read(address);
 }
 
 auto MMU::unmapped_io_read(const Address& address) const -> u8 {
@@ -145,8 +151,15 @@ void MMU::write(const Address& address, const u8 byte) {
 }
 
 void MMU::write_io(const Address& address, const u8 byte) {
-    // Implement hardware registers
-    return;
+    u16 addr = address.value();
+
+    // APU registers and wave RAM
+    if (addr >= 0xFF10 && addr <= 0xFF3F) {
+        gb.apu.write(address, byte);
+        return;
+    }
+
+    unmapped_io_write(address, byte);
 }
 
 void MMU::unmapped_io_write(const Address& address, const u8 byte) {

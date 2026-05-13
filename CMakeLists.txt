@@ -26,7 +26,7 @@ declare_library(gbemu-core src)
 # SDL target
 find_package(SDL2)
 
-if (SDL2_FOUND)
+if (SDL2_FOUND AND IS_DIRECTORY "${CMAKE_SOURCE_DIR}/platforms/sdl")
   declare_executable(gbemu platforms/sdl)
   include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
   target_link_libraries(gbemu gbemu-core ${SDL2_LIBRARIES})
