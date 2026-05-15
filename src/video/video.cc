@@ -101,14 +101,14 @@ void Video::tick(Cycles cycles) {
     }
 }
 
-auto Video::display_enabled() const -> bool { return check_bit(control_byte, 7); }
-auto Video::window_tile_map() const -> bool { return check_bit(control_byte, 6); }
-auto Video::window_enabled() const -> bool { return check_bit(control_byte, 5); }
-auto Video::bg_window_tile_data() const -> bool { return check_bit(control_byte, 4); }
-auto Video::bg_tile_map_display() const -> bool { return check_bit(control_byte, 3); }
-auto Video::sprite_size() const -> bool { return check_bit(control_byte, 2); }
-auto Video::sprites_enabled() const -> bool { return check_bit(control_byte, 1); }
-auto Video::bg_enabled() const -> bool { return check_bit(control_byte, 0); }
+auto Video::display_enabled() const -> bool { return check_bit(lcd_control.value(), 7); }
+auto Video::window_tile_map() const -> bool { return check_bit(lcd_control.value(), 6); }
+auto Video::window_enabled() const -> bool { return check_bit(lcd_control.value(), 5); }
+auto Video::bg_window_tile_data() const -> bool { return check_bit(lcd_control.value(), 4); }
+auto Video::bg_tile_map_display() const -> bool { return check_bit(lcd_control.value(), 3); }
+auto Video::sprite_size() const -> bool { return check_bit(lcd_control.value(), 2); }
+auto Video::sprites_enabled() const -> bool { return check_bit(lcd_control.value(), 1); }
+auto Video::bg_enabled() const -> bool { return check_bit(lcd_control.value(), 0); }
 
 void Video::write_scanline(u8 current_line) {
     if (!display_enabled()) { return; }
@@ -394,5 +394,8 @@ void Video::register_vblank_callback(const vblank_callback_t& _vblank_callback) 
 }
 
 void Video::draw() {
+    static int frame_count = 0;
+    frame_count++;
+    fprintf(stderr, "[DRAW] frame=%d lcdc=0x%02X\n", frame_count, lcd_control.value());
     vblank_callback(buffer);
 }

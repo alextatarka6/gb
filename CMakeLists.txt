@@ -6,6 +6,7 @@ list(APPEND CMAKE_MODULE_PATH
 
 include(add_warnings)
 include(add_sources)
+include(declare_targets)
 
 project(gbemu)
 

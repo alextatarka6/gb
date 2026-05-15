@@ -324,6 +324,7 @@ void CPU::opcode_halt() {
 // STOP — treated as HALT for now (full STOP also powers down LCD)
 void CPU::opcode_stop() {
     halted = true;
+    get_byte_from_pc(); // consume the 0x00 operand byte
 }
 
 // LD

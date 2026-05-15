@@ -26,7 +26,7 @@ inline auto set_bit(const u8 value, const u8 bit) -> u8 {
 }
 
 inline auto clear_bit(const u8 value, const u8 bit) -> u8 {
-    auto value_cleared = value | ~(1 << bit);
+    auto value_cleared = value & ~(1 << bit);
     return static_cast<u8>(value_cleared);
 }
 

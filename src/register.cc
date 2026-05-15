@@ -14,7 +14,7 @@ auto ByteRegister::value() const -> u8 { return val; }
 auto ByteRegister::check_bit(u8 bit) const -> bool { return bitwise::check_bit(val, bit); }
 
 void ByteRegister::set_bit_to(u8 bit, bool set) {
-    bitwise::bit_set_to(val, bit, set);
+    val = bitwise::bit_set_to(val, bit, set);
 }
 
 void ByteRegister::increment() {

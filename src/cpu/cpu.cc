@@ -11,10 +11,10 @@ using bitwise::compose_bytes;
 CPU::CPU(Gameboy& inGb, Options& inOptions) :
     gb(inGb),
     options(inOptions),
-    af(a, f),
-    bc(b, c),
-    de(d, e),
-    hl(h, l)
+    af(f, a),
+    bc(c, b),
+    de(e, d),
+    hl(l, h)
 {
 }
 
@@ -169,9 +169,11 @@ auto CPU::execute_normal_opcode(u8 opcode, u16 opcode_pc) -> Cycles {
         case 0xE0: opcode_E0(); break; case 0xE1: opcode_E1(); break; case 0xE2: opcode_E2(); break; case 0xE3: opcode_E3(); break; case 0xE4: opcode_E4(); break; case 0xE5: opcode_E5(); break; case 0xE6: opcode_E6(); break; case 0xE7: opcode_E7(); break; case 0xE8: opcode_E8(); break; case 0xE9: opcode_E9(); break; case 0xEA: opcode_EA(); break; case 0xEB: opcode_EB(); break; case 0xEC: opcode_EC(); break; case 0xED: opcode_ED(); break; case 0xEE: opcode_EE(); break; case 0xEF: opcode_EF(); break;
         case 0xF0: opcode_F0(); break; case 0xF1: opcode_F1(); break; case 0xF2: opcode_F2(); break; case 0xF3: opcode_F3(); break; case 0xF4: opcode_F4(); break; case 0xF5: opcode_F5(); break; case 0xF6: opcode_F6(); break; case 0xF7: opcode_F7(); break; case 0xF8: opcode_F8(); break; case 0xF9: opcode_F9(); break; case 0xFA: opcode_FA(); break; case 0xFB: opcode_FB(); break; case 0xFC: opcode_FC(); break; case 0xFD: opcode_FD(); break; case 0xFE: opcode_FE(); break; case 0xFF: opcode_FF(); break;
     }
-    return !branch_taken 
-    ? opcode_cycles[opcode] 
-    : opcode_cycles_branched[opcode];
+    u8 cycles = !branch_taken ? opcode_cycles[opcode] : opcode_cycles_branched[opcode];
+    if (cycles == 0) {
+        fprintf(stderr, "[ILLEGAL] 0-cycle opcode 0x%02X at PC=0x%04X\n", opcode, opcode_pc);
+    }
+    return cycles;
 }
 
 auto CPU::execute_cb_opcode(u8 opcode, u16 opcode_pc) -> Cycles {

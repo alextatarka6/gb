@@ -299,5 +299,22 @@ auto Debugger::parse_command(std::string cmd) -> CommandType {
     if (cmd == "regs" || cmd == "registers") return CommandType::Registers;
     if (cmd == "flags") return CommandType::Flags;
     if (cmd == "memory" || cmd == "mem") return CommandType::Memory;
-    if (cmd == "memory" || cmd == "mem") return CommandType::Memory;
+    if (cmd == "address" || cmd == "addr") return CommandType::MemoryCell;
+    if (cmd == "steps") return CommandType::Steps;
+    if (cmd == "log") return CommandType::Log;
+    if (cmd == "exit") return CommandType::Exit;
+    if (cmd == "help" || cmd == "h") return CommandType::Help;
+
+    return CommandType::Unknown;
+}
+
+void Debugger::command_breakaddr(Args args) {
+    if (args.size() != 1) {
+        log_error("Invalid arguments to command");
+        return;
+    }
+
+    breakpoint_addr = static_cast<u16>(std::stoul(args[0], nullptr, 16));
+    debugger_enabled = false;
+    log_info("Breakpoint set at address 0x%04X", breakpoint_addr);
 }

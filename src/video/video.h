@@ -38,8 +38,6 @@ public:
     u8 read(const Address& address);
     void write(const Address& address, u8 byte);
 
-    u8 control_byte;
-
     ByteRegister lcd_control;
     ByteRegister lcd_status;
 

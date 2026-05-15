@@ -1,0 +1,13 @@
+function(declare_library name dir)
+    set_property(GLOBAL PROPERTY ALL_SRC_FILES "")
+    add_subdirectory(${dir})
+    get_property(sources GLOBAL PROPERTY ALL_SRC_FILES)
+    add_library(${name} ${sources})
+    target_include_directories(${name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+endfunction()
+
+function(declare_executable name dir)
+    file(GLOB_RECURSE sources "${CMAKE_CURRENT_SOURCE_DIR}/${dir}/*.cc")
+    add_executable(${name} ${sources})
+    target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+endfunction()

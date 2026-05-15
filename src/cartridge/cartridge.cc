@@ -134,10 +134,8 @@ void MBC3::write(const Address& address, u8 value) {
     }
 
     if (address.in_range(0x2000, 0x3FFF)) {
-        if (value == 0x0) { rom_bank.set(0x1); }
-
-        u16 rom_bank_bits = value & 0x1F;
-        rom_bank.set(rom_bank_bits);
+        u16 bank = value & 0x7F;
+        rom_bank.set(bank == 0 ? 1 : bank);
     }
 
     if (address.in_range(0x4000, 0x5FFF)) {
